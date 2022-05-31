@@ -42,7 +42,6 @@ user = root
 pwd = 12345678
 dbname = cron_task
 
-
 [mail] #配置邮件信息
 host = smtp.163.com
 port = 25
@@ -55,7 +54,7 @@ savetime=7
 
 创建数据库cron_task，再导入cron_task.sql
 
-	$ mysql -u username -p -D cron_task < cron_task.sql
+$ mysql -u username -p -D cron_task < cron_task.sql
 
 运行
 
