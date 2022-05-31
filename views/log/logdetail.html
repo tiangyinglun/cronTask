@@ -1,0 +1,57 @@
+{{ define "logdetail.html" }}
+{{template "public/header" .}}
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">任务名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="task_name" disabled lay-verify="required"
+                   value="{{$.task.TaskName}}"
+                   class="layui-input">
+
+        </div>
+    </div>
+
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">时间表达式</label>
+        <div class="layui-input-block">
+            <input type="email" name="cron_spec" placeholder="时间表达式" lay-reqtext="时间表达式不能为空" value="{{$.task.CronSpec}}"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">httpurl</label>
+        <div class="layui-input-block">
+            <input type="text" name="host" placeholder="请输Host" value="{{$.task.HttpUrl}}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">httpcode</label>
+        <div class="layui-input-block">
+            <input type="text" name="host" placeholder="请输Host" value="{{$.log.Httpcode}}" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label ">请求参数</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请输入内容" class="layui-textarea" name="command">{{$.log.Output}}</textarea>
+
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="host" placeholder="请输Host" value="{{$.datetime}}" class="layui-input">
+        </div>
+    </div>
+
+
+</div>
+
+
+{{template "public/footer" .}}
+{{ end }}

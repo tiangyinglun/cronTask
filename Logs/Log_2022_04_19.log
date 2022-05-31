@@ -1,0 +1,2 @@
+time="2022-04-19T17:24:00+08:00" level=error msg="获取参数：runtime error: invalid memory address or nil pointer dereference" func=Run
+time="2022-04-19T17:31:00+08:00" level=error msg="获取参数：runtime error: invalid memory address or nil pointer dereference" func=Run

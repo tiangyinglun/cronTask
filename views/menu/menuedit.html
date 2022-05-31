@@ -1,0 +1,140 @@
+{{ define "menuedit.html" }}
+{{template "public/header" .}}
+<link rel="stylesheet" href="/assets/css/themes/default.css" media="all">
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">菜单名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" lay-verify="required" lay-reqtext="菜单名称不能为空" placeholder="请输入菜单名称"
+                   value="{{.menu.Title}}"
+                   class="layui-input">
+            <tip>填写菜单名称。</tip>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">是否栏目</label>
+        <div class="layui-input-block">
+            <input type="radio" name="is_category" {{if eq .menu.IsCategory 0}} checked="" {{end}} value="0" title="否">
+            <input type="radio" name="is_category" {{if eq .menu.IsCategory 1}} checked="" {{end}} value="1" title="是">
+        </div>
+    </div>
+
+    <input type="hidden" value="{{.menu.Id}}" name="id">
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">选择父栏目</label>
+        <div class="layui-input-block">
+            <select name="parend_id" lay-filter="aihao">
+                <option value="0">root</option>
+                {{range $vl:=.cate }}
+                <option value="{{$vl.Id}}" {{if eq $vl.ParentId 0}} selected="" {{end}}><i style="color: #0000FF">{{$vl.Title}}</i>
+                </option>
+                {{range $e:= $vl.Children }}
+                <option value="{{$e.Id}}" {{if eq $e.ParentId 0}} selected="" {{end}}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i
+                        style="color: #00FF00">{{$e.Title}}</i>
+                </option>
+                {{end}}
+                {{end}}
+            </select>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">排序</label>
+        <div class="layui-input-block">
+            <input type="number" name="order" lay-reqtext="手机不能为空" placeholder="请输排序" value="{{.menu.Orders}}"
+                   class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">图标</label>
+        <div class="layui-input-block">
+            <input type="text" id="iconPicker" name="icon" lay-filter="iconPicker" value="{{.menu.Icon}}" class="hide">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">路径地址</label>
+        <div class="layui-input-block">
+            <input type="text" name="uri" lay-verify="required" placeholder="请输入路径" value="{{.menu.Uri}}"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+        </div>
+    </div>
+</div>
+<script src="/assets/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+
+
+    layui.use(['form', 'iconPickerFa', 'layer'], function () {
+
+        var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+        var iconPickerFa = layui.iconPickerFa
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+
+        iconPickerFa.render({
+            // 选择器，推荐使用input
+            elem: '#iconPicker',
+            // fa 图标接口
+            url: "/assets/lib/font-awesome-4.7.0/less/variables.less",
+            // 是否开启搜索：true/false，默认true
+            search: true,
+            // 是否开启分页：true/false，默认true
+            page: true,
+            // 每页显示数量，默认12
+            limit: 12,
+            // 点击回调
+            click: function (data) {
+                console.log(data);
+                $("#iconPicker").val(data.icon)
+            },
+            // 渲染成功后的回调
+            success: function (d) {
+                console.log("11111")
+                console.log(d);
+            }
+        });
+
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            $.ajax({
+                url: "/menu/edit",
+                type: "POST",
+                data: data.field,
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, function () {
+                            parent.location.reload()
+                            parent.layer.close(index);
+                        });
+                        return false
+                    } else {
+                        layer.msg(data.msg)
+                        return false
+                    }
+
+                },
+                error: function (data) {
+                    layer.msg('系统错误~~');
+                    return false
+                }
+            })
+
+            return false;
+        });
+
+    });
+</script>
+{{template "public/footer" .}}
+{{ end }}

@@ -1,0 +1,147 @@
+{{ define "taskedit.html" }}
+{{template "public/header" .}}
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">任务名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="task_name" lay-verify="required" lay-reqtext="任务名称不能为空" placeholder="请输入任务名称"
+                   value="{{.task.TaskName}}"
+                   class="layui-input">
+            <tip>填写自己任务名称。</tip>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">请求方式</label>
+        <div class="layui-input-block">
+            <input type="radio" name="task_type" value="GET" {{if eq .task.TaskType "GET" }} checked="" {{end}}
+            title="GET">
+            <input type="radio" name="task_type" value="POST" {{if eq .task.TaskType "POST" }} checked="" {{end}}
+            title="POST">
+        </div>
+    </div>
+
+    <input name="id" type="hidden" value="{{.task.Id}}">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">任务类型</label>
+        <div class="layui-input-block">
+            <select name="group_id" lay-filter="aihao">
+                {{range $k,$v:=.group}}
+                <option value="{{$v.Id}}" {{if eq $.task.GroupId $v.Id }} selected="" {{end}}><i style="color: #0000FF">{{$v.GroupName}}</i>
+                </option>
+                {{end}}
+            </select>
+        </div>
+    </div>
+
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">请求地址</label>
+        <div class="layui-input-block">
+            <input type="text" name="http_url" lay-verify="required" lay-reqtext="请求地址不能为空"
+                   placeholder="请输地址必须以 http 开头" value="{{.task.HttpUrl}}"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">时间表达式</label>
+        <div class="layui-input-block">
+            <input type="email" name="cron_spec" placeholder="时间表达式" lay-reqtext="时间表达式不能为空" value="{{.task.CronSpec}}"
+                   class="layui-input">
+            <tip><a style="color:blue" href="/help/index">注：时间表达式使用帮助？</a></tip>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">Host</label>
+        <div class="layui-input-block">
+            <input type="text" name="host" placeholder="请输Host" value="{{.task.Host}}" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label ">请求参数</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请输入内容" class="layui-textarea" name="command">{{.task.Command}}</textarea>
+            <tip>a=b&c=m格式</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text" style="display: none">
+        <label class="layui-form-label">超时设置（秒）</label>
+        <div class="layui-input-block">
+            <input type="text" name="timeout" placeholder="请输timeout" value="{{.task.Timeout}}" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label ">邮件通知</label>
+        <div class="layui-input-block ">
+            <input type="radio" name="notify" {{if eq $.task.Notify 0 }} checked="" {{end}} value="0" title="不通知">
+            <input type="radio" name="notify" {{if eq $.task.Notify 1 }} checked="" {{end}} value="1" title="执行失败时通知">
+            <input type="radio" name="notify" {{if eq $.task.Notify 2 }} checked="" {{end}} value="2" title="执行结束时通知">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item email_mail">
+        <label class="layui-form-label ">通知邮件</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请输入内容" class="layui-textarea" name="notify_email">{{.task.NotifyEmail}}</textarea>
+            <tip style="color: red">注：每次编辑就会把定时任务暂停掉</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+    layui.use(['jquery', 'form', 'layer'], function () {
+
+        var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            $.ajax({
+                url: "/task/edit",
+                type: "POST",
+                data: data.field,
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, function () {
+                            parent.location.reload()
+                            parent.layer.close(index);
+                        });
+                    } else {
+                        layer.msg(data.msg)
+                        return false
+                    }
+
+                },
+                error: function (data) {
+                    layer.msg('系统错误~~');
+                    return false
+                }
+            })
+
+            return false;
+        });
+
+    });
+</script>
+{{template "public/footer" .}}
+{{ end }}

@@ -1,0 +1,114 @@
+{{ define "useredit.html" }}
+{{template "public/header" .}}
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">用户名</label>
+        <div class="layui-input-block">
+            <input type="text" name="username" lay-verify="required" disabled lay-reqtext="用户名不能为空" placeholder="请输入用户名"
+                   value="{{.user.Username}}"
+                   class="layui-input">
+            <tip>填写自己管理账号的名称。</tip>
+        </div>
+    </div>
+    <input type="hidden" value="{{.user.Id}}" name="id">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" {{if eq .user.Status 0}} checked {{end}} value="0" title="禁用">
+            <input type="radio" name="status" {{if eq .user.Status 1}} checked {{end}} value="1" title="开启">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色选择</label>
+        <div class="layui-input-block">
+            <select name="role_id" lay-filter="aihao">
+                {{range $k,$v:=.roles}}
+                <option value="{{$v.Id}}" {{if eq $v.Id $.user.RoleId}} selected {{end}}><i style="color: #0000FF">{{$v.Name}}</i>
+                </option>
+                {{end}}
+            </select>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">手机</label>
+        <div class="layui-input-block">
+            <input type="text" name="mobile" lay-reqtext="手机不能为空" placeholder="请输入手机" value="{{.user.Mobile}}"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">邮箱</label>
+        <div class="layui-input-block">
+            <input type="email" name="email" placeholder="请输入邮箱" value="{{.user.Email}}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" placeholder="请输入姓名" value="{{.user.Name}}" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">密码</label>
+        <div class="layui-input-block">
+            <input type="text" name="password" placeholder="请输入密码" value="" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注信息</label>
+        <div class="layui-input-block">
+            <textarea name="remarks" class="layui-textarea" placeholder="请输入备注信息">{{.user.Remarks}}</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form'], function () {
+        var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            $.ajax({
+                url: "/user/edit",
+                type: "POST",
+                data: data.field,
+                success: function (data) {
+                    if (data.code == 0) {
+                        layer.msg(data.msg, function () {
+                            parent.location.reload()
+                            parent.layer.close(index);
+                        });
+                    } else {
+                        layer.msg(data.msg)
+                        return false
+                    }
+                },
+                error: function (data) {
+                    layer.msg('系统错误~~');
+                    return false
+                }
+            })
+
+            return false;
+        });
+
+    });
+</script>
+{{template "public/footer" .}}
+{{ end }}

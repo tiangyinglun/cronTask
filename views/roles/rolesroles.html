@@ -1,0 +1,145 @@
+{{ define "rolesroles.html" }}
+{{template "public/header" .}}
+
+<style>
+    .call_bakk .laytable-cell-checkbox {
+        text-align: left;
+    }
+
+</style>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-form layuimini-form">
+            <blockquote class="layui-elem-quote layui-text">
+                <span style="font-size: 24px;color: #00FF00"> {{.rolesinfo.Name}}</span> 权限分配<span style="color: red">（注意：栏目下面必须有二级栏目才能显示）</span>
+            </blockquote>
+
+            <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+            <div class="layui-form layui-border-box layui-table-view" lay-filter="LAY-table-1" lay-id="currentTableId"
+                 style=" ">
+
+                <div class="layui-table-box">
+
+                    <div class="layui-table-body layui-table-main">
+                        <table cellspacing="0" cellpadding="0" border="0" class="layui-table" style="width: 100%"
+                               lay-skin="line">
+                            <tbody>
+                            <input type="hidden" id="roleid" value="{{.rolesinfo.Id}}"/>
+                            {{range $v:=.menus}}
+
+                            {{range $tk,$tv:=$v.Children}}
+                            <tr data-index="0" class="" style="background: {{$v.Color}}">
+                                {{if eq $tk 0 }}
+                                <td class="layui-table-col-special" {{if eq $tk 0}} rowspan="{{$v.Count}}" {{end}}
+                                    style="width: 20%;">
+                                    <div class="layui-table-cell  laytable-cell-checkbox">
+                                        <input type="checkbox" name="layTableCheckbox[]" {{if $v.Checked}} checked
+                                               {{end}}
+                                               value="{{$v.Id}}" lay-skin="primary">{{$v.Title}}
+                                        <div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+                                            <i class="layui-icon layui-icon-ok"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                                {{end}}
+
+
+                                <td class="layui-table-col-special call_bakk" style="width: 20%">
+
+                                    <div class="layui-table-cell laytable-cell-checkbox"
+                                         style="width: 200px">
+                                        <input type="checkbox" name="layTableCheckbox[]" {{if $tv.Checked}} checked
+                                               {{end}}
+                                               value="{{$tv.Id}}"
+                                               lay-skin="primary">{{$tv.Title}}
+                                        <div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+                                            <i class="layui-icon layui-icon-ok"></i>
+                                        </div>
+                                    </div>
+
+                                </td>
+
+                                <td class="layui-table-col-special call_bakk" style="width: 60%;">
+                                    {{range $fv:=$tv.Children}}
+                                    <div class="layui-table-cell  laytable-cell-checkbox"
+                                         style="width: 180px;float: left">
+                                        <input type="checkbox" name="layTableCheckbox[]" value="{{$fv.Id}}" {{if
+                                               $fv.Checked}}
+                                               checked {{end}} lay-skin="primary">{{$fv.Title}}
+                                        <div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+                                            <i class="layui-icon layui-icon-ok"></i>
+                                        </div>
+                                    </div>
+                                    {{end}}
+                                </td>
+                            </tr>
+
+                            {{end}}
+                            {{end}}
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="float: right;margin-right:100px ">
+                    <button class="layui-btn" style="float: left" lay-submit lay-filter="saveBtn">编辑权限
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'table'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
+
+
+        // 监听搜索操作
+        form.on('submit(saveBtn)', function (data) {
+            console.log(data)
+            var list = data.field
+            var listvar = Object.values(list)
+            listvarStr = listvar.join(",")
+            console.log(listvarStr)
+            var roleId = document.getElementById("roleid")
+            roleIdval=roleId.value
+            $.ajax(
+                {
+                    url: "/roles/roles",
+                    type: "POST",
+                    data: {roleid: roleIdval, menuid: listvarStr},
+                    success: function (data) {
+                        if (data.code == 0) {
+                            layer.msg('更新成功');
+                        } else {
+                            layer.msg(data.msg)
+                            return false
+                        }
+
+                    },
+                    error: function (data) {
+                        layer.msg('系统错误~~');
+                        return false
+                    }
+                }
+            )
+
+            return false
+        });
+
+
+    });
+</script>
+
+{{template "public/footer" .}}
+{{ end }}
