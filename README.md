@@ -29,29 +29,7 @@
 
 	$ go get  github.com/tiangyinglun/cronTask
 
-打开配置文件 conf/app.conf，修改相关配置。
-log_level = "DEBUG"
-
-[app]
-
-host=10.208.24.218
-
-[mysql]
-host = 127.0.0.1
-port = 3306
-user = root
-pwd = 12345678
-dbname = cron_task
-
-[mail] #配置邮件信息
-host = smtp.163.com
-port = 25
-user = XXXXXX
-password =XXXXXX
-
-[log]
-#执行日志保存天数
-savetime=7
+ 
 
 创建数据库cron_task，再导入cron_task.sql
 
@@ -70,8 +48,4 @@ http://localhost:8000
 
 帐号：admin
 密码：123456
-=======
-秒级定时执行后台管理系统
-#账号：admin  密码：123456
-
->>>>>>> e86c9bd56fbddfa932e7cbfc388285b4a45a3ca5
+ 
