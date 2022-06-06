@@ -17,7 +17,10 @@
 
 ## 界面截图
 
- 
+![cronTask](https://github.com/tiangyinglun/cronTask/blob/main/assets/images/1653984296407.jpg)
+
+
+![cronTask](https://github.com/tiangyinglun/cronTask/blob/main/assets/images/1653984290840.jpg)
 
 
 ## 安装说明
